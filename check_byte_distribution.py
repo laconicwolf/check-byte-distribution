@@ -3,7 +3,7 @@
 __author__ = 'Jake Miller (@LaconicWolf)'
 __date__ = '20180514'
 __version__ = '0.01'
-__description__ = """A program to check byte distribution for a given set of data"""
+__description__ = """A program to check byte distribution for a given set of data."""
 
 
 import matplotlib.pyplot as plt 
@@ -78,8 +78,9 @@ def main():
     if args.line_by_line:
         data = input_data.splitlines()
         line_number = 1
+        distribution_list = []
     else:
-        data = [input_data]
+        data = [input_data]      
     for item in data:
         if type(item) == str:
             item = item.encode()
@@ -95,16 +96,31 @@ def main():
             plot_histogram(item_list)
         if args.plot_scatter:
             plot_scatter(item_list)
-        if args.line_by_line:
-            print("\n[*] Processing line {}: {}...".format(line_number, item[:10]))
-            line_number += 1
-        else:
+        if args.verbose:
             print("[*] Processing {}...".format(item[:50]))
         item_dict = create_byte_histogram(item)
-        print("[*] Checking byte representation...")
+        if args.verbose:
+            print("[*] Checking byte representation...")
         missing_bytes = check_byte_representation(item_dict)
         missing_byte_count = sum([1 for byte in missing_bytes])
-        print("[+] {} bytes positions are not represented in the data".format(missing_byte_count))
+        if args.line_by_line:
+            results = {"line": line_number, "missing bytes": missing_byte_count}
+            distribution_list.append(results)
+            print("\n[*] Line {}: Bytes positions not represented in the data: {}".format(line_number, missing_byte_count))
+            line_number += 1
+        else:
+            print("[+] {} bytes positions are not represented in the data".format(missing_byte_count))
+    if args.line_by_line:
+        most_missing = sorted(distribution_list, key=lambda x: x['missing bytes'], reverse=True)[0]
+        least_missing = sorted(distribution_list, key=lambda x: x['missing bytes'])[0]
+        print()
+        print("Most missing bytes:")
+        print("Line: {}".format(most_missing['line']))
+        print("Num missing bytes: {}".format(most_missing['missing bytes']))
+        print()
+        print("Least missing bytes:")
+        print("Line: {}".format(least_missing['line']))
+        print("Num missing bytes: {}".format(least_missing['missing bytes']))
 
 
 if __name__ == '__main__':
@@ -113,26 +129,26 @@ if __name__ == '__main__':
                         help="Increase output verbosity", 
                         action="store_true")
     parser.add_argument("-ph", "--plot_histogram",
-                        help="Plot at histogram.", 
+                        help="Plot as histogram", 
                         action="store_true")
     parser.add_argument("-ps", "--plot_scatter",
-                        help="Plot as scatter.", 
+                        help="Plot as scatter", 
                         action="store_true")
     parser.add_argument("-d", "--data",
-                        help="Specify the data as a string.")
+                        help="Specify the data as a string")
     parser.add_argument("-f", "--file",
-                        help="Specify a file containing the data.")
+                        help="Specify a file containing the data")
     parser.add_argument("-u", "--url_decode",
-                        help="Decode the URL encoded characters.", 
+                        help="Decode the URL encoded characters", 
                         action="store_true")
     parser.add_argument("-b", "--b64_decode",
-                        help="Decode the b64 encoded data.", 
+                        help="Decode the b64 encoded data", 
                         action="store_true")
     parser.add_argument("-l", "--line_by_line",
-                        help="Checks entropy of data in a file line by line.",
+                        help="Checks entropy of data in a file line by line",
                         action="store_true")
     parser.add_argument("-x", "--hex_decode",
-                        help="Decode the hex encoded data.",
+                        help="Decode the hex encoded data",
                         action="store_true")
     args = parser.parse_args()
 
