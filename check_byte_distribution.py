@@ -87,6 +87,10 @@ def main():
         if args.url_decode:
             item = decode_url_encoding(item)
         if args.b64_decode:
+            if b'\n' in item:
+                items = item.split(b'\n')
+                items = [base64.b64decode(item) for item in items]
+                item = base64.b64encode(b''.join(items))
             item = base64.b64decode(item)
         if args.hex_decode:
             item = bytes.fromhex(item.decode())
