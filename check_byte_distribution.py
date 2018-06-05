@@ -54,7 +54,7 @@ def check_byte_representation(bytes_dict):
 def plot_histogram(data):
     """Plots a histogram from the given data.
     """
-    plt.hist(data, color='g')
+    plt.hist(data, color='g', bins=range(256))
     plt.title('Byte Histogram')
     plt.ylabel('Occurence')
     plt.xlabel('Byte Values')
