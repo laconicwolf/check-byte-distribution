@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 __author__ = 'Jake Miller (@LaconicWolf)'
 __date__ = '20180514'
