@@ -6,12 +6,30 @@ __version__ = '0.01'
 __description__ = """A program to check byte distribution for a given set of data."""
 
 
-import matplotlib.pyplot as plt 
+
 import base64
-import urllib.parse
 import argparse
 import os
 
+# Fixes Python3 to Python2 backwards compatability
+try:
+    from urlparse import urlparse
+except:
+    from urllib.parse import urlparse
+
+# Third party modules
+missing_modules = []
+try:
+    import matplotlib.pyplot as plt 
+except ImportError as error:
+    missing_module = str(error).split(' ')[-1]
+    missing_modules.append(missing_module)
+
+if missing_modules:
+    for m in missing_modules:
+        print('[-] Missing module: {}'.format(m))
+        print('[*] Try running "pip3 install {}", or do an Internet search for installation instructions.\n'.format(m.strip("'")))
+    exit()
 
 def decode_url_encoding(input_string):
     """Returns a URL decoded byte-string
@@ -20,7 +38,7 @@ def decode_url_encoding(input_string):
         input_string = input_string.decode()
     if '%' not in input_string:
         return input_string.encode()
-    return urllib.parse.unquote(input_string).encode()
+    return urlparse.unquote(input_string).encode()
 
 
 def get_integer_list(input_bytes):
